@@ -5,12 +5,13 @@ import ItemRow from './ItemRow';
 import ItemsTable from './ItemsTable';
 
 interface ItemsContainerProps {
+    root: string;
     paths: string[];
     filters: string[];
     onToggleFolder: (path: string, isOpen: boolean) => void;
 }
 
-const ItemsContainer: React.FC<ItemsContainerProps> = ({ paths, filters, onToggleFolder }) => {
+const ItemsContainer: React.FC<ItemsContainerProps> = ({ root, paths, filters, onToggleFolder }) => {
     const [itemDetails, setItemDetails] = useState<{ [path: string]: number }>({});
     const [openFolders, setOpenFolders] = useState<{ [path: string]: boolean }>({});
     const [folderChildren, setFolderChildren] = useState<{ [path: string]: string[] }>({});
@@ -55,6 +56,22 @@ const ItemsContainer: React.FC<ItemsContainerProps> = ({ paths, filters, onToggl
         fetchItemDetails();
     }, [paths]);
 
+    useEffect(() => {
+        const fetchAllItems = async () => {
+            for (const path of paths) {
+                if (!folderChildren[path]) {
+                    const children = await getFolderItems(path);
+                    setFolderChildren((prevFolderChildren) => ({
+                        ...prevFolderChildren,
+                        [path]: children,
+                    }));
+                }
+            }
+        };
+    
+        fetchAllItems();
+    }, []);
+    
     async function getItemCount(path: string): Promise<number> {
         const count = await invoke<number>('get_item_count', {
             path: path,
@@ -162,13 +179,16 @@ const ItemsContainer: React.FC<ItemsContainerProps> = ({ paths, filters, onToggl
                     type={isFolder ? 'Folder' : 'File'}
                     // count={isFolder ? itemDetails[path] || 0 : 0}
                     path={path}
+                    root={root}
                     isOpen={isOpen}
                     onClick={() => handleFolderClick(path)}
                 />
                 {isFolder && isOpen && (
                     <tr>
                         <td colSpan={3} style={{ paddingLeft: '2rem', borderLeft: '1px solid #ccc' }}>
-                            <ItemsContainer paths={children} filters={filters} onToggleFolder={onToggleFolder} />
+                            <ItemsContainer 
+                                root={root}
+                            paths={children} filters={filters} onToggleFolder={onToggleFolder} />
                         </td>
                     </tr>
                 )}

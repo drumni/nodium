@@ -46,3 +46,13 @@ pub fn get_item_count(path: String) -> i32 {
 pub fn get_total_count(path: String) -> i32 {
     crate::utils::get_total_count(path)
 }
+
+#[tauri::command]
+pub fn check_markdown(root: String, path: String) -> bool {
+    crate::utils::check_markdown(root, path)
+}
+
+#[tauri::command]
+pub fn analyze_markdown(path: String) -> bool {
+    crate::utils::analyze_markdown(path)
+}

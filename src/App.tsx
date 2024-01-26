@@ -14,7 +14,7 @@ import OpenInObsidianButton from './assets/OpenInObsidianButton';
 import AnalyzeButton from './assets/AnalyzeButton';
 
 function App() {
-  const [name, setName] = useState('');
+  const [root, setRoot] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [items, setItems] = useState<string[]>([]);
   const [filter, setFilter] = useState('');
@@ -25,7 +25,7 @@ function App() {
   listen('folder-selected', (event: any) => {
     if (event.payload == "null") return;
 
-    setName(event.payload.replace(/\"/gm, '') as string);
+    setRoot(event.payload.replace(/\"/gm, '') as string);
     setIsLoadButtonDisabled(false); // Enable the "Load Folder" button when a folder is selected
   });
 
@@ -44,7 +44,7 @@ function App() {
 
     if (!result.canceled && result.path) {
       if (result.path == "null") return;
-      setName(result.path.replace(/\"/gm, '') as string);
+      setRoot(result.path.replace(/\"/gm, '') as string);
       setIsLoadButtonDisabled(false); // Enable the "Load Folder" button when a folder is selected
     }
   }
@@ -65,16 +65,16 @@ function App() {
   async function handleFolderLoad(): Promise<void> {
     setIsLoading(true);
     await invoke<string[]>('init_vault', {
-      path: name,
+      path: root,
     });
 
     const _items = await invoke<string[]>('load_folder', {
-      path: name,
+      path: root,
     });
     setItems(_items);
 
     // load_gitignore
-    let git_ignore_path = name + '/.gitignore';
+    let git_ignore_path = root + '/.gitignore';
     const _gitignore = await invoke<string[]>('load_gitignore', {
       path: git_ignore_path,
     });
@@ -111,8 +111,8 @@ function App() {
           <input
             id="greet-input"
             style={{ width: '30rem' }}
-            onChange={(e) => setName(e.currentTarget.value)}
-            value={name}
+            onChange={(e) => setRoot(e.currentTarget.value)}
+            value={root}
             placeholder="Select Any Folder..."
           />
           {/* :button for select folder dialog */}
@@ -129,7 +129,7 @@ function App() {
           <div className="container">
             <div className="row">
               <AnalyzeButton className="row" onClick={handleFolderLoad} disabled={isLoadButtonDisabled} loading={isLoading} />
-              <OpenInObsidianButton className="row" onClick={() => invoke('open_in_obsidian', { path: name })} />
+              <OpenInObsidianButton className="row" onClick={() => invoke('open_in_obsidian', { path: root })} />
               <FilterInput className="row" filter={filter} setFilter={setFilter} />
               <AddFilterButton className="row" onClick={handleAddFilter} disabled={filter.trim() === ''} />
             </div>
@@ -139,7 +139,7 @@ function App() {
 
 
         <div className="row">
-          {items.length > 0 && <Items paths={items} filters={filters} onToggleFolder={() => { }} />}
+          {items.length > 0 && <Items root={root} paths={items} filters={filters} onToggleFolder={() => { }} />}
         </div>
       </div>
     </div>

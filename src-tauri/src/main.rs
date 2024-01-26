@@ -9,6 +9,7 @@ mod config;
 mod obsidian;
 mod utils;
 mod vault;
+mod metadata;
 
 fn main() {
     Builder::default()
@@ -21,7 +22,9 @@ fn main() {
             commands::load_folder,
             commands::get_item_count,
             commands::init_vault,
-            commands::open_in_obsidian
+            commands::open_in_obsidian,
+            commands::check_markdown,
+            commands::analyze_markdown,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
