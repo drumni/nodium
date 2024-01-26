@@ -1560,6 +1560,7 @@ name = "nodium-app"
 version = "0.0.0"
 dependencies = [
  "ignore",
+ "percent-encoding",
  "serde",
  "serde_json",
  "tauri",

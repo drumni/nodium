@@ -162,7 +162,6 @@ const ItemsContainer: React.FC<ItemsContainerProps> = ({ paths, filters, onToggl
                     type={isFolder ? 'Folder' : 'File'}
                     // count={isFolder ? itemDetails[path] || 0 : 0}
                     path={path}
-                    filter={filters}
                     isOpen={isOpen}
                     onClick={() => handleFolderClick(path)}
                 />

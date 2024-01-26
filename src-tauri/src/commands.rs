@@ -43,6 +43,6 @@ pub fn get_item_count(path: String) -> i32 {
 }
 
 #[tauri::command]
-pub fn get_total_count(path: String, filter: Vec<String>) -> i32 {
-    crate::utils::get_total_count(path, filter)
+pub fn get_total_count(path: String) -> i32 {
+    crate::utils::get_total_count(path)
 }

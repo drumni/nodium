@@ -34,7 +34,7 @@ pub fn get_item_count(path: String) -> i32 {
     }
 }
 
-pub fn get_total_count(path: String, filter: Vec<String>) -> i32 {
+pub fn get_total_count(path: String) -> i32 {
     let mut total_count = 0;
 
     // Ensure the path points to a directory
@@ -43,26 +43,19 @@ pub fn get_total_count(path: String, filter: Vec<String>) -> i32 {
         return -1;
     }
 
-    let mut excludes = ignore::overrides::OverrideBuilder::new(&path);
-    for line in filter {
-        excludes.add(&line).unwrap();
-    }
-
     let walker = WalkBuilder::new(path)
         .hidden(false)
         .follow_links(false)
-        .git_ignore(false)
+        .git_ignore(true)
         .build();
 
     for result in walker {
         match result {
             Ok(entry) => {
                 let path = Path::new(entry.path().to_str().unwrap());
+
                 if path.is_file() {
-                    let extension = path.extension().and_then(OsStr::to_str);
-                    if extension == Some("md") {
-                        total_count += 1;
-                    }
+                    total_count += 1;
                 }
             }
             Err(e) => {

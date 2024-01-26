@@ -11,14 +11,14 @@ interface ItemRowProps {
   name: string;
   type: string;
   // count: number;
-  filter: string[];
 
   onClick: () => void;
 }
 
-const ItemRow: React.FC<ItemRowProps> = ({ isFolder, isOpen, path, name, type, filter, onClick }) => {
+const ItemRow: React.FC<ItemRowProps> = ({ isFolder, isOpen, path, name, type, onClick }) => {
   const [count, setCount] = React.useState<number>(0);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isAnalyzed, setIsAnalyzed] = React.useState<boolean>(false);
 
   const handleAnalyzeClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
@@ -50,7 +50,7 @@ const ItemRow: React.FC<ItemRowProps> = ({ isFolder, isOpen, path, name, type, f
 
   const getTotalCount = async (): Promise<number> => {
     let totalCount = 0;
-    const total_count = await invoke<number>("get_total_count", { path: path, filter: filter});
+    const total_count = await invoke<number>("get_total_count", { path: path});
     totalCount = total_count as number;
     return totalCount;
   };
