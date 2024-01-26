@@ -15,11 +15,16 @@ pub fn open_folder_dialog(app: tauri::AppHandle) {
 
 pub fn load_folder(path: String) -> Vec<String> {
     let mut items: Vec<String> = Vec::new();
-    // log path to console
+    // check if directory exists
+    let path = Path::new(&path);
+    if !path.is_dir() {
+        return items;
+    }
+
     let paths = match std::fs::read_dir(path.clone()) {
         Ok(paths) => paths,
-        Err(_) => {
-            eprintln!("Error encountered while reading the directory {:?}", path);
+        Err(e) => {
+            eprintln!("Error encountered while reading the directory {:?}: {:?}", path, e);
             return items;
         }
     };
@@ -165,12 +170,11 @@ pub fn generate_markdown(md_path: PathBuf, file_path: PathBuf) -> bool {
                     t
                 }
             }
-            Err(e) => {
-                eprintln!("Error encountered while reading the file [{}]: {:?}", file_path.display(), e);
-                "".to_string()
+            Err(_) => {
+                format!("[{}]({})", file_name, file_path.clone().into_os_string().into_string().unwrap())
             }
         },
-        false => "".to_string(),
+        false => format!("[{}]({})", file_name, file_path.clone().into_os_string().into_string().unwrap())
     };
 
     markdown_lines.push(metadata);

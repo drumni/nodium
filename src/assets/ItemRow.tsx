@@ -88,6 +88,10 @@ const ItemRow: React.FC<ItemRowProps> = ({ isFolder, isOpen, path, name, type, o
     }
  }, [isFolder, isOpen, name]);
 
+  if(!isOpen) {
+    <>.</> 
+  }
+
  return (
     <tr>
       <td style={{ textAlign: "left" }}>

@@ -8,10 +8,11 @@ interface ItemsContainerProps {
     root: string;
     paths: string[];
     filters: string[];
+    hidden?: boolean;
     onToggleFolder: (path: string, isOpen: boolean) => void;
 }
 
-const ItemsContainer: React.FC<ItemsContainerProps> = ({ root, paths, filters, onToggleFolder }) => {
+const ItemsContainer: React.FC<ItemsContainerProps> = ({ root, paths, filters, hidden, onToggleFolder }) => {
     const [itemDetails, setItemDetails] = useState<{ [path: string]: number }>({});
     const [openFolders, setOpenFolders] = useState<{ [path: string]: boolean }>({});
     const [folderChildren, setFolderChildren] = useState<{ [path: string]: string[] }>({});
@@ -180,18 +181,20 @@ const ItemsContainer: React.FC<ItemsContainerProps> = ({ root, paths, filters, o
                     // count={isFolder ? itemDetails[path] || 0 : 0}
                     path={path}
                     root={root}
-                    isOpen={isOpen}
+                    isOpen={!hidden}
                     onClick={() => handleFolderClick(path)}
                 />
-                {isFolder && isOpen && (
-                    <tr>
-                        <td colSpan={3} style={{ paddingLeft: '2rem', borderLeft: '1px solid #ccc' }}>
-                            <ItemsContainer 
-                                root={root}
-                            paths={children} filters={filters} onToggleFolder={onToggleFolder} />
-                        </td>
-                    </tr>
-                )}
+                <tr>
+                    <td colSpan={3} style={{ paddingLeft: '2rem', borderLeft: '1px solid #ccc' }}>
+                        <ItemsContainer 
+                            root={root}
+                            paths={children} 
+                            filters={filters} 
+                            onToggleFolder={onToggleFolder}
+                            hidden={!isOpen}
+                            />
+                    </td>
+                </tr>
             </React.Fragment>
         );
     });
