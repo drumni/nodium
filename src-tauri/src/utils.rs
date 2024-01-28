@@ -137,7 +137,8 @@ pub fn check_markdown(root_path_string: String, file_path_string: String) -> boo
     let file = std::fs::File::create(md_path.clone());
     match file {
         Ok(_) => {
-            generate_markdown(md_path, file_path)
+            let root_path = Path::new(&root_path_string).to_path_buf();
+            generate_markdown(md_path, file_path, root_path)
         }
         Err(e) => {
             eprintln!("Error encountered while creating the file: {:?}", e);
@@ -146,43 +147,47 @@ pub fn check_markdown(root_path_string: String, file_path_string: String) -> boo
     }
 }
 
-pub fn generate_markdown(md_path: PathBuf, file_path: PathBuf) -> bool {
+pub fn generate_markdown(md_path: PathBuf, file_path: PathBuf, root_path: PathBuf) -> bool {
     let extension: String = match file_path.extension().and_then(OsStr::to_str) {
         Some(e) => e.to_string(),
         None => "".to_string(),
     };
 
-    let metadata = crate::metadata::get_metadata_string(file_path.clone());
+    let metadata = crate::metadata::get_metadata_string(file_path.clone(), root_path);
     let mut markdown_lines: Vec<String> = Vec::new();
     let file_name = match file_path.file_name() {
         Some(f) => f.to_str().unwrap().to_string(),
         None => "".to_string(),
     };
 
-    // check if text is readable and if it has more than 420 characters then truncate it
+    // check if text is readable and if it has more than 420 characters then truncate it ![Logo](file://{}
+    // let file_link_string = format!("[{}]({})", file_name, file_path.clone().into_os_string().into_string().unwrap());
+    let file_link_string = format!("![{}](file://{})", file_name, file_path.clone().into_os_string().into_string().unwrap());
     let text = match file_path.is_file() {
         true => match std::fs::read_to_string(file_path.clone()) {
             Ok(t) => {
                 if t.len() > 420 {
                     format!("\n > It's a heavy file, so we are showing only the first 420 characters of the file.\n\n
-                    {}...", &t[..420])
+                    ```{}\n{}\n```\n\n 
+                    To view the full file, click on the file link below.\n\n
+                    {}",
+                    extension, &t[..420], file_link_string)
                 } else {
-                    t
+                    format!("```{}\n{}\n```", extension, t)
                 }
             }
             Err(_) => {
-                format!("[{}]({})", file_name, file_path.clone().into_os_string().into_string().unwrap())
+                "".to_string()
             }
         },
-        false => format!("[{}]({})", file_name, file_path.clone().into_os_string().into_string().unwrap())
+        false => {
+            "".to_string()
+        }
     };
 
     markdown_lines.push(metadata);
     markdown_lines.push(format!("# Documentation for {}", file_name));
-    markdown_lines.push(format!("```{}", extension));
-    markdown_lines.push(text);
-    markdown_lines.push("```".to_string());
-
+    markdown_lines.push( if text == "" { format!("{}", file_link_string) } else { format!("{}", file_name) } );
     let markdown = markdown_lines.join("\n");
 
     match std::fs::write(md_path, markdown) {

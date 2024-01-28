@@ -5,7 +5,7 @@ pub struct Metadata {
     pub tags: Vec<String>,
 }
 
-pub fn get_metadata(path: PathBuf) -> Metadata {
+pub fn get_metadata(path: PathBuf, root_path: PathBuf) -> Metadata {
     let path = Path::new(&path);
     // split every path into its components using regex and other methods
     // than add all items to the list and remove duplicates
@@ -16,7 +16,14 @@ pub fn get_metadata(path: PathBuf) -> Metadata {
         .split(|c| c == '/' || c == '\\' || c == '.')
         .map(|s| s.to_string())
         .collect();
-
+    // filter tags out which contain in root_path
+    let root_path_string = root_path.to_str().unwrap();
+    tags = tags
+        .iter()
+        .filter(|s| !s.contains(root_path_string))
+        .map(|s| s.to_string())
+        .collect();
+    
     tags.retain(|s| !s.is_empty());
     tags.dedup();
     tags.reverse();
@@ -34,10 +41,10 @@ pub fn get_metadata(path: PathBuf) -> Metadata {
     }
 }
 
-pub fn get_metadata_string(path: PathBuf) -> String {
-    let metadata = get_metadata(path);
+pub fn get_metadata_string(path: PathBuf, root_path: PathBuf) -> String {
+    let metadata = get_metadata(path, root_path);
     format!(
-        "---\nname: {}\ntags: {:?}\n---\n",
+        "---\nname: {}\nlinks: {:?}\n---\n",
         metadata.name, metadata.tags
     )
 }
