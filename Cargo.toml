@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "nodium-cli",
+    "nodium-interface",
+    "nodes/nodium_ping", "nodes/nodium_echo",
+]

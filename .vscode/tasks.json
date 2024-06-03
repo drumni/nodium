@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "rust: cargo run with plugins",
+			"type": "cargo",
+			"command": "run",
+			"args": [
+				"--features",
+				"load-plugins"
+			],
+			"problemMatcher": [
+				"$rustc"
+			]
+		}
+	]
+}

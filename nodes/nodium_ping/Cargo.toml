@@ -1,0 +1,10 @@
+[package]
+name = "nodium_ping"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+nodium-interface = { path = "../../nodium-interface" }
+
+[lib]
+crate-type = ["cdylib"]

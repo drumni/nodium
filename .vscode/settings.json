@@ -1,0 +1,10 @@
+{
+  "cSpell.words": [
+    "libloading",
+    "Nodium",
+    "webbrowser"
+  ],
+    "rust-analyzer.cargo.features": "all",
+    "rust-analyzer.checkOnSave.command": "clippy",
+    "editor.formatOnSave": true
+}

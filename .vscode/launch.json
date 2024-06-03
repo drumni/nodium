@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Nodium",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/nodium-cli/target/debug/nodium-cli.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/nodium-cli",
+            "environment": [],
+            "externalConsole": false,
+            "preLaunchTask": "cargo build",
+            "sourceFileMap": {
+                "/": "${workspaceFolder}/nodium-cli"
+            },
+            "miDebuggerPath": "C:/path/to/gdb.exe"
+        }
+    ]
+}

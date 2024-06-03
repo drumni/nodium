@@ -1,0 +1,8 @@
+[package]
+name = "nodium-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+libloading = "0.7"
+nodium-interface = { path = "../nodium-interface" }
